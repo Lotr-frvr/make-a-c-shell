@@ -1,0 +1,5 @@
+exit
+hop test/new
+hop ..
+reveal 
+cd ..

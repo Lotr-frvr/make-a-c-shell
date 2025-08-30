@@ -22,6 +22,10 @@ void execute_command(char* command, char * args[] ) {
     else if(strcmp(command,"reveal")==0){
         reveal(args);
     }
+    else if(strcmp(command,"log")==0){
+        log_command(args);
+    }
+    
     else{
         printf(ERROR_COLOR"Command not found: %s\n"RESET, command);
     }
@@ -82,6 +86,8 @@ void input(){
         // input wasnt read properly
         fprintf(stderr, "Error reading input\n");
     }
+    log_write_command_to_file(input_command);  // Log the command
+
     input_utils(input_command);
     free(input_command);
 }

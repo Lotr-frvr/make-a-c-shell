@@ -14,12 +14,12 @@ void execute_command(char* command, char *args[]);
 int is_custom_command(char* command);
 
 
-// /* log.c */
-// void log_command_execute(int index);
-// void log_write_command_to_file(char* cmd);
-// void log_command(char* args[]);
-// char* get_log_file_path();
-// void log_purge();
+/* log.c */
+void log_command_execute(int index);
+void log_write_command_to_file(char* cmd);
+void log_command(char* args[]);
+char* get_log_file_path();
+void log_purge();
 
 // /*signal.c*/
 

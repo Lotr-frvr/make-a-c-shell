@@ -31,7 +31,50 @@ any folder name beginning with `.` is a hidden folder
 you can see them when you do reaveal -a els eyou wont see ., .. and hidden files/folders
 
 `struct stat` -> get the file metadata 
+S_ISDIR(fileStat.st_mode): Checks if the file is a directory.
+S_IXUSR, S_IXGRP, S_IXOTH: Check if the file is executable by user, group, or others.
+S_IRUSR, S_IWUSR, S_IRGRP, S_IWGRP, S_IROTH, S_IWOTH: Check read/write permissions for user, group, and others.
+These macros are defined in <sys/stat.h> and are used to interpret the st_mode field of struct stat for file type and permissions.
 
+dirname /usr/bin/
+              -> "/usr"
+
+       dirname dir1/str dir2/str
+              -> "dir1" followed by "dir2"
+
+       dirname stdio.h
+              -> "."
+
+`opendir`, `readdir`, and `closedir` for directory operations
 The number of hard links `fileStat.st_nlink`
 The owner and group names `getpwuid, getgrgid`
 The file size in bytes `fileStat.st_size`
+
+
+### log.c
+
+log
+
+Implemented a ‘log’ command which is similar to the actual history command in bash. 
+
+#define MAX_LOG 15
+ 
+ You must overwrite the oldest commands if more than the set number of commands are entered. You should track the commands across all sessions and not just one. The commands should be printed from oldest to recent moving top to down (Refer example below).
+
+    Haven't stored the log command in log. In cases where multiple commands separated by ; or & contain a log command,hasn't stored the entire command string. 
+    
+log purge
+Clears all the log currently stored. Do not store this command in the log.
+
+log execute <index>
+
+Execute the command at position in log (ordered from most recent to oldest).
+
+Checks for memory allocation failures when creating file paths.
+Handles errors when opening, creating, or writing to the log file.
+Skips logging duplicate commands (does not log if the last command is the same).
+Skips logging commands containing "log" to avoid recursive logging.
+Handles cases where the log file does not exist and creates it if needed.
+Handles purging errors and missing log entries for execution by index.
+
+`checkandcreatefile` The log file is created in the user's home directory if it does not exist
