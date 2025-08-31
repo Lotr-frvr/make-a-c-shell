@@ -59,25 +59,40 @@ int is_custom_command(char* command) {
     return 0;
 }
 
-void input_utils(char* input_command){
-    int bg_bit = 0;
-    char *saveptr;
-    char *token = strtok_r(input_command, ";", &saveptr);
-    while (token != NULL) {
-        // Check for '&' in the command to set bg_bit
-        bg_bit = (strchr(token, '&') != NULL) ? 1 : 0;
+void input_utils(char* input_command) {
+    int len = strlen(input_command);
+    int i = 0;
+    while (i < len) {
+        // Find start of next command
+        while (i < len && (input_command[i] == ' ' || input_command[i] == '\t' || input_command[i] == '\n'))
+            i++;
+        if (i >= len) break;
 
-        // Remove '&' from the command if present
-        char *amp = strchr(token, '&');
-        if (amp) *amp = ' ';
+        // Find end of command and delimiter
+        int start = i;
+        int bg_bit = 0;
+        while (i < len && input_command[i] != ';' && input_command[i] != '&')
+            i++;
+        int end = i;
+
+        // Check delimiter
+        if (i < len && input_command[i] == '&')
+            bg_bit = 1;
+
+        // Extract command substring
+        char cmd[1024];
+        strncpy(cmd, input_command + start, end - start);
+        cmd[end - start] = '\0';
 
         // Remove leading/trailing whitespace
+        char *token = cmd;
         while (*token == ' ' || *token == '\t') token++;
-        char *end = token + strlen(token) - 1;
-        while (end > token && (*end == ' ' || *end == '\t' || *end == '\n')) {
-            *end = '\0';
-            end--;
+        char *cmd_end = token + strlen(token) - 1;
+        while (cmd_end > token && (*cmd_end == ' ' || *cmd_end == '\t' || *cmd_end == '\n')) {
+            *cmd_end = '\0';
+            cmd_end--;
         }
+
         if (strlen(token) > 0) {
             // Tokenize command and arguments
             char *args[ARGS_COMMAND];
@@ -90,15 +105,15 @@ void input_utils(char* input_command){
             }
             args[argc] = NULL;
             if (argc > 0) {
-                // You can pass bg_bit to your command functions if needed
                 if (is_custom_command(args[0])) {
-                    execute_command(args[0], args);// custom commands doesn't have background processes
+                    execute_command(args[0], args);
                 } else {
                     run_external_command(args[0], args, bg_bit);
                 }
             }
         }
-        token = strtok_r(NULL, ";", &saveptr);
+        // Move past delimiter
+        i++;
     }
 }
 

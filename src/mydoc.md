@@ -111,4 +111,8 @@ gedit works, sleep works
 cd doesn't work because 
 The cd command is a shell built-in and cannot be executed using execvp as an external command.
 
+ls & pwd; echo hi & sleep 1
+here `&` and `;` seperates the different commands 
+& indicates bg processes 
+
 ### 
