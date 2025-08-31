@@ -100,6 +100,8 @@ Background Process
 
 The shell uses `fork` to create child processes for external commands. Foreground processes are managed with `waitpid`, while background processes run independently.
 
+`setpgid` on the condition that it is a background process--> this helps wiht proclore 
+backround processes will have a different group
 note :-
 for sleep 4; sleep 3;
 
@@ -115,4 +117,34 @@ ls & pwd; echo hi & sleep 1
 here `&` and `;` seperates the different commands 
 & indicates bg processes 
 
-### 
+### proclore.c
+
+Information required to print :
+- pid
+- Process Status (R/R+/S/S+/Z)
+- Process group
+- Virtual Memory
+- Executable path of process
+
+create file paths for accessing the process information in the proc filesystem for a gvien process ID
+
+snprintf(stat_path, sizeof(stat_path), "/proc/%d/stat", pid); // path to the executable
+llly two more paths to stat file, virtual memory
+
+It constructs paths to `/proc/<pid>/stat (process status)`, `/proc/<pid>/exe` (executable path).
+It opens `/proc/<pid>/stat` and reads several fields:
+`pid`: Process ID.
+`comm[BUFFER_SIZE]`: The command name (executable name) of the process.
+`state`: The process state (e.g., 'R' for running, 'S' for sleeping).
+`pgrp`: Process group ID.
+
+Compare the process group ID (pgrp) with your shell’s foreground process group (getpgrp()).
+If they match, append + to the status character.
+
+Other fields are skipped until the 23rd field, which is vsize (virtual memory size in bytes).
+It uses readlink on `/proc/<pid>/exe` to get the full path to the process's executable.
+Finally, it prints the PID, process status, process group, virtual memory (in KB), and executable path.
+
+`readlink` is a system call in C that reads the value of a symbolic link (symlink). It copies the path that the symlink points to into a buffer.
+`ssize_t len = readlink("/proc/1234/exe", buf, bufsize);`
+

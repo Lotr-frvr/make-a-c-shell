@@ -56,7 +56,7 @@
 
 // proclore.c
 #define PATH_NAME 256
-#define BUFFER_SIZE 256
+#define BUFFER_SIZE 256 // also used to store the command for printing proclore
 
 // system.c
 

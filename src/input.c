@@ -9,6 +9,9 @@ void run_external_command(char* command, char * args[], int bg_bit) {
         return;
     }
     else if(pid==0){
+        if(bg_bit){
+            setpgid(0, 0); // Set a new process group for background process
+        }
         execvp(command, args);
         perror("execvp failed");
         exit(1);
@@ -39,7 +42,12 @@ void execute_command(char* command, char * args[] ) {
     else if(strcmp(command,"log")==0){
         log_command(args);
     }
-    
+    else if(strcmp(command,"seek")==0){
+        seek(args);
+    }
+    else if(strcmp(command,"proclore")==0){
+        proclore(args);
+    }
     else{
         printf(ERROR_COLOR"Command not found: %s\n"RESET, command);
     }

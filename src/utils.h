@@ -37,14 +37,14 @@ struct backproc{
     char name[CURRFG_SIZE];
 };
 
-// /*seek.c*/
+/*seek.c*/
 // void dfs(char rel_dir[], char abs_path[], char search_file[], int flag_id);
-// void seek(char* args[]);
+void seek(char* args[]);
 
 
-// /*proclore.c*/
-// void proclore(char* args[]);
-
+/*proclore.c*/
+void proclore(char* args[]);
+void print_Process_info(pid_t pid);
 
 
 // /*pipe.c*/
