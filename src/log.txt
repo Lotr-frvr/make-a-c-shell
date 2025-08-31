@@ -1,15 +1,15 @@
-proclore
-sleep 10 & sleep 5; sleep 20 &
-proclore
-sleep 10 & sleep 5; sleep 20 &
-proclore 292947
-proclore
 exit
-sleep 10 & sleep 5; sleep 20 &
-proclore 296892
-proclore
-sleep 10 & sleep 5; sleep 20 &
-sleep 15 & sleep 5; sleep 20 &
-proclore 301998
-proclore
+seek newfolder
+exit
+seek newfolder
+seek newfolder ./newfolder
+seek -d newfolder ./newfolder
+seek -f newfolder ./newfolder
+seek newfolder ./obj
+seek -d -f newfolder ./obj
+seek -e -f newfolder ./newfolder
+exit
+seek -e -f newfolder ./newfolder
+seek -e -d newfloder ./newfolder
+seek -e -d newfolder
 exit

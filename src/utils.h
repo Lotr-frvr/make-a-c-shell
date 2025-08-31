@@ -38,9 +38,10 @@ struct backproc{
 };
 
 /*seek.c*/
-// void dfs(char rel_dir[], char abs_path[], char search_file[], int flag_id);
+void dfs(char rel_dir[], char abs_path[], char search_file[], int flag_id);
 void seek(char* args[]);
-
+int has_permission(const char *path, int is_dir);
+void color_print(const char *path, int is_dir);
 
 /*proclore.c*/
 void proclore(char* args[]);
