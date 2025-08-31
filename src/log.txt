@@ -1,5 +1,15 @@
 exit
-hop test/new
-hop ..
-reveal 
+sleep 5; hop test
+gedit syscomm; sleep 4; sleep 6 &; sleep 3;
+sleep 4 ; sleep 5 &; sleep 3;
+exit
+sleep 5 ; sleep 10 &; 
+hop test
+exit
+sleep 5; sleep 10&;
+sleep 10 &; hop test
 cd ..
+cd .
+gedit hg
+cd ~
+cd /Desktop

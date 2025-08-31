@@ -45,6 +45,12 @@
 //reveal.c
 #define MAX_FILES 128
 
+
+// system commands
+// fg.c bg.c
+#define CURRFG_SIZE 256
+#define BG_MAX 128
+
 //seek.c
 #define FILE_SEARCH 128
 
@@ -64,5 +70,3 @@
 #define PROCESS_LIST_NUM 128
 
 
-// fg.c
-#define CURRFG_SIZE 128

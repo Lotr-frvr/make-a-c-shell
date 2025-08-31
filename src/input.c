@@ -2,13 +2,27 @@
 #include "utils.h"
 
 
-void run_external_command(char* command, char * args[] ) {
-    // this should be handles as foreground and background processes
-    printf("Running external command: %s\n", command);
-    printf("With arguments:\n");
-    for (int i = 0; args[i] != NULL; i++) {
-        printf("  %s\n", args[i]);
+void run_external_command(char* command, char * args[], int bg_bit) {
+    pid_t pid= fork();
+    if(pid<0){
+        perror("fork failed");
+        return;
     }
+    else if(pid==0){
+        execvp(command, args);
+        perror("execvp failed");
+        exit(1);
+    }
+    else {
+        if(bg_bit){
+            bg_function(command, args, pid);// args[0]=command
+        }
+        else {
+            fg_function(command, args, pid);
+        }
+    }
+
+    
 }
 
 
@@ -46,9 +60,17 @@ int is_custom_command(char* command) {
 }
 
 void input_utils(char* input_command){
+    int bg_bit = 0;
     char *saveptr;
-    char *token = strtok_r(input_command, ";&", &saveptr);
+    char *token = strtok_r(input_command, ";", &saveptr);
     while (token != NULL) {
+        // Check for '&' in the command to set bg_bit
+        bg_bit = (strchr(token, '&') != NULL) ? 1 : 0;
+
+        // Remove '&' from the command if present
+        char *amp = strchr(token, '&');
+        if (amp) *amp = ' ';
+
         // Remove leading/trailing whitespace
         while (*token == ' ' || *token == '\t') token++;
         char *end = token + strlen(token) - 1;
@@ -68,14 +90,15 @@ void input_utils(char* input_command){
             }
             args[argc] = NULL;
             if (argc > 0) {
+                // You can pass bg_bit to your command functions if needed
                 if (is_custom_command(args[0])) {
-                    execute_command(args[0], args);
+                    execute_command(args[0], args);// custom commands doesn't have background processes
                 } else {
-                    run_external_command(args[0], args);
+                    run_external_command(args[0], args, bg_bit);
                 }
             }
         }
-        token = strtok_r(NULL, ";&", &saveptr);
+        token = strtok_r(NULL, ";", &saveptr);
     }
 }
 

@@ -2,7 +2,7 @@ CC = gcc        # Define the compiler
 CFLAGS = -g -Wall  # Flags for debugging and warnings
 
 # List of source and object files
-SRCS = main.c prompt.c input.c hop.c reveal.c log.c 
+SRCS = main.c prompt.c input.c hop.c reveal.c log.c fg.c bg.c
 OBJS = $(SRCS:.c=.o)
 
 # Target executable name

@@ -1,5 +1,9 @@
 #include "header_library.h"
 #include "utils.h"
+extern int currfgid;
+extern int currfgtime;
+extern char currfgcom[CURRFG_SIZE];
+
 
 void prompt(char oghome_path[]){
     char user_name[USER_NAME_SIZE];
@@ -30,6 +34,11 @@ void prompt(char oghome_path[]){
     printf(GREEN "%s@%s" RESET, user_name, host_name);
     printf(":");
     printf(BLUE "%s" RESET, prompt_path);
+    if(currfgtime>2){
+        printf(" %s : %ds ", currfgcom, currfgtime);
+        currfgtime = 0;
+        currfgcom[0] = '\0';
+    }
     printf("$ ");
     return ;
 }

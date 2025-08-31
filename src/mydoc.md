@@ -78,3 +78,37 @@ Handles cases where the log file does not exist and creates it if needed.
 Handles purging errors and missing log entries for execution by index.
 
 `checkandcreatefile` The log file is created in the user's home directory if it does not exist
+
+
+### system commands
+
+The shell was implemented to execute other system commands present in Bash, such as emacs, gedit, etc., in both foreground and background processes.
+
+Foreground Process
+- Executing a command in the foreground meant the shell waited for that process to complete and regained control afterwards. Control of the terminal was handed over to this process while it was running.
+- If a foreground process took more than 2 seconds to run, the time taken and the name of the process were printed in the next prompt, with the time rounded down to the nearest integer.
+
+Background Process
+- Any command invoked with “&” was treated as a background command. The shell spawned the process but did not hand control of the terminal to it, allowing the shell to continue accepting other user commands. Whenever a new background process was started, the PID of the newly created background process was printed on the shell.
+
+
+
+- Background processes were not handled for custom commands (hop, reveal, log, etc.).
+- Multiple background processes could be run simultaneously.
+- When a background process finished, a message was displayed to the user autonomously, without further interaction required.
+- The process name and PID were printed when a background process ended, along with an indication of whether the process ended normally or abnormally.
+
+The shell uses `fork` to create child processes for external commands. Foreground processes are managed with `waitpid`, while background processes run independently.
+
+note :-
+for sleep 4; sleep 3;
+
+in the next prompt it will only show `~ sleep 3 $`
+
+defined the struct backproc in headerfiel. Initialised it in main.c and called it in input.c using extern
+
+gedit works, sleep works
+cd doesn't work because 
+The cd command is a shell built-in and cannot be executed using execvp as an external command.
+
+### 

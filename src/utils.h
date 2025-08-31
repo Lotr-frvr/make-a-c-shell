@@ -9,7 +9,7 @@ void prompt(char oghome_path[]);
 /* input.c */
 void input();
 void input_utils(char* input_command);
-void run_external_command(char* command, char *args[]);
+void run_external_command(char* command, char *args[],int bg_bit);
 void execute_command(char* command, char *args[]);
 int is_custom_command(char* command);
 
@@ -30,6 +30,13 @@ void hop(char* args[]);
  void reveal(char* args[]);
  void display_file_info(char *file_name, char *file_path, int show_hidden, int show_long);
 
+
+// system commands
+struct backproc{
+    pid_t pid;
+    char name[CURRFG_SIZE];
+};
+
 // /*seek.c*/
 // void dfs(char rel_dir[], char abs_path[], char search_file[], int flag_id);
 // void seek(char* args[]);
@@ -39,8 +46,6 @@ void hop(char* args[]);
 // void proclore(char* args[]);
 
 
-// /*systemcall.c*/
-// void systemcall(char* command,char *args[]);
 
 // /*pipe.c*/
 // void pipe_handler(char* cmd);
@@ -68,15 +73,12 @@ void hop(char* args[]);
 // void iMan(char* args[]);
 
 
-// /*fg.c*/
-// void fg_function(char* command, char* args[]);
-// //extern char* currfgcomm;
-// //extern int currfgid;
+/*fg.c*/
+void fg_function(char* command, char* args[], pid_t pid);
 
-// /*bg.c*/
-// //extern int bg_count;
-// void bg_function(char* command, char* args[]);
-
+/*bg.c*/
+void bg_function(char* command, char* args[], pid_t pid);
+void bg_exit_handler(int signum);
 // void delete_bg(int id);
 // void sigchld_handler(int signum);
 // void handle_bg_termination();
