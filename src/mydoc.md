@@ -148,3 +148,17 @@ Finally, it prints the PID, process status, process group, virtual memory (in KB
 `readlink` is a system call in C that reads the value of a symbolic link (symlink). It copies the path that the symlink points to into a buffer.
 `ssize_t len = readlink("/proc/1234/exe", buf, bufsize);`
 
+### seek.c
+
+Recursively searches for files and/or directories matching the search term in the target directory. Uses dfs
+Prints relative paths of all matches, coloring files in green and directories in blue.
+Supports flags to filter results:
+-d: Only directories.
+-f: Only files.
+-e: If exactly one match is found, prints file content (if file) or changes to the directory (if directory), checking permissions.
+Handles errors for invalid flag combinations (e.g., -d and -f together) and missing matches.
+
+Permission Checks: Uses `access` to check read/execute permissions for files and directories.
+
+### pipes, i/o redirection and redirection along pipes
+
