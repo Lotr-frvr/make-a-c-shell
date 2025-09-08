@@ -69,4 +69,5 @@
 //activities.c
 #define PROCESS_LIST_NUM 128
 #define COMM_SIZE 4096
+#define MAX_BG_PROCS 256
 

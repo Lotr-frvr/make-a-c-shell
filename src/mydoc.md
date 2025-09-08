@@ -187,3 +187,18 @@ For background jobs (&), the child typically calls setpgid(0, 0) so it runs in i
 
 Issue -> echo "hello world" > out.txt may pass the literal argument "hello world" (including quotes) to the executed program or to a file write, producing output that contains the quotes instead of hello world.
 You can pass hello world without quotes
+
+
+### activities
+
+prints a list of all the processes currently running that were spawned by your shell in lexicographic order. This list contains the following information about all processes :
+
+    Command Name
+
+    pid
+
+    state : running or stopped
+
+Format of an entry is:
+
+[pid] : [command name] - [State]

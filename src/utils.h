@@ -55,20 +55,10 @@ void redirection_handler(char *command);
 char* trim_command(char* cmd);
 
 /*activities.c*/
+void activities();
 
-
-// extern int bgi; // index of current background process
-// struct backproc
-// {
-//     /* data */
-//     int id;
-//     char comm[COMM_SIZE];
-// };
-// extern struct backproc *bgs; // list of background processes
-
-
-// void display_processes(char* args[]);
-// int compareComm(const void *a, const void *b);
+extern int bgi; // index of current background process
+extern struct backproc *bgs; // list of background processes
 
 // /*iMan.c*/
 // void iMan(char* args[]);
@@ -87,11 +77,11 @@ void bg_exit_handler(int signum);
 
 // /*neonate.c*/
 
-// /*ping.c*/
-// void ping(char* args[]);
-// void ctrlc();
-// void ctrld();
-// void ctrlz();
+/*ping.c*/
+void ping(char* args[]);
+void ctrlc();
+void ctrld();
+void ctrlz();
 
 
 // /*fgtotbg*/

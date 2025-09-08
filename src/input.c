@@ -15,29 +15,28 @@ char* strip_quotes(char* str) {
 }
 
 void run_external_command(char* command, char * args[], int bg_bit) {
-    pid_t pid= fork();
-    if(pid<0){
+    pid_t pid = fork();
+    if (pid < 0) {
         perror("fork failed");
         return;
     }
-    else if(pid==0){
-        if(bg_bit){
+    else if (pid == 0) {
+        if (bg_bit) {
             setpgid(0, 0); // Set a new process group for background process
         }
         execvp(command, args);
-        perror("execvp failed");
+        // If execvp returns, an error occurred
+        fprintf(stderr, "Error: failed to execute '%s': %s\n", command, strerror(errno));
         exit(1);
     }
     else {
-        if(bg_bit){
-            bg_function(command, args, pid);// args[0]=command
+        if (bg_bit) {
+            bg_function(command, args, pid); // args[0]=command
         }
         else {
             fg_function(command, args, pid);
         }
     }
-
-    
 }
 
 
@@ -59,6 +58,12 @@ void execute_command(char* command, char * args[] ) {
     }
     else if(strcmp(command,"proclore")==0){
         proclore(args);
+    }
+    else if (strcmp(command, "activities") == 0) {
+        activities();
+    }
+    else if(strcmp(command, "ping") == 0) {
+        ping(args);
     }
     else{
         printf(ERROR_COLOR"Command not found: %s\n"RESET, command);
