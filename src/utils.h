@@ -48,13 +48,13 @@ void proclore(char* args[]);
 void print_Process_info(pid_t pid);
 
 
-// /*pipe.c*/
-// void pipe_handler(char* cmd);
+/*pipe.c*/
+void pipe_handler(char *cmd);
+/*redirect.c*/
+void redirection_handler(char *command);
+char* trim_command(char* cmd);
 
-// /*redirect.c*/
-// void redirection_handler(char* cmd);
-
-// /*activities.c*/
+/*activities.c*/
 
 
 // extern int bgi; // index of current background process
@@ -62,7 +62,7 @@ void print_Process_info(pid_t pid);
 // {
 //     /* data */
 //     int id;
-//     char comm[4096];
+//     char comm[COMM_SIZE];
 // };
 // extern struct backproc *bgs; // list of background processes
 

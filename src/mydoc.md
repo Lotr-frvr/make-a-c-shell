@@ -161,4 +161,29 @@ Handles errors for invalid flag combinations (e.g., -d and -f together) and miss
 Permission Checks: Uses `access` to check read/execute permissions for files and directories.
 
 ### pipes, i/o redirection and redirection along pipes
+Redirect 
 
+Shell redirects by opening the target file, then replacing the standard descriptor (stdin/stdout) in the child process with the opened file descriptor using dup2().
+
+> : open with O_WRONLY|O_CREAT|O_TRUNC — overwrite.
+
+>>: open with O_WRONLY|O_CREAT|O_APPEND — append.
+
+< : open with O_RDONLY — used as standard input.
+
+After dup2() the child calls execvp(); the parent waits for the child.
+
+Pipes 
+
+pipe() gives two descriptors: read (p[0]) and write (p[1]).
+
+For a pipeline cmd1 | cmd2 | cmd3, the shell connects cmd1's stdout to a pipe, cmd2 reads from that pipe and writes to the next pipe, etc. Each stage is typically a separate fork()+exec.
+
+Parent must carefully close unused ends of pipes and wait for children.
+
+Background jobs
+
+For background jobs (&), the child typically calls setpgid(0, 0) so it runs in its own process group; shell does not block waiting for the job, but must track it for job control.
+
+Issue -> echo "hello world" > out.txt may pass the literal argument "hello world" (including quotes) to the executed program or to a file write, producing output that contains the quotes instead of hello world.
+You can pass hello world without quotes

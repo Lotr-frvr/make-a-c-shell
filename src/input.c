@@ -1,6 +1,18 @@
 #include "header_library.h"
 #include "utils.h"
 
+char* strip_quotes(char* str) {
+    if (!str) return str;
+    int len = strlen(str);
+    if (len >= 2) {
+        if ((str[0] == '"' && str[len - 1] == '"') ||
+            (str[0] == '\'' && str[len - 1] == '\'')) {
+            str[len - 1] = '\0';   // remove last quote
+            return str + 1;        // skip first quote
+        }
+    }
+    return str;
+}
 
 void run_external_command(char* command, char * args[], int bg_bit) {
     pid_t pid= fork();
@@ -70,29 +82,30 @@ int is_custom_command(char* command) {
 void input_utils(char* input_command) {
     int len = strlen(input_command);
     int i = 0;
+
     while (i < len) {
-        // Find start of next command
+        // Skip whitespace
         while (i < len && (input_command[i] == ' ' || input_command[i] == '\t' || input_command[i] == '\n'))
             i++;
         if (i >= len) break;
 
-        // Find end of command and delimiter
+        // Find command boundaries
         int start = i;
         int bg_bit = 0;
         while (i < len && input_command[i] != ';' && input_command[i] != '&')
             i++;
         int end = i;
 
-        // Check delimiter
+        // Background flag
         if (i < len && input_command[i] == '&')
             bg_bit = 1;
 
-        // Extract command substring
+        // Extract command
         char cmd[1024];
         strncpy(cmd, input_command + start, end - start);
         cmd[end - start] = '\0';
 
-        // Remove leading/trailing whitespace
+        // Trim
         char *token = cmd;
         while (*token == ' ' || *token == '\t') token++;
         char *cmd_end = token + strlen(token) - 1;
@@ -102,24 +115,36 @@ void input_utils(char* input_command) {
         }
 
         if (strlen(token) > 0) {
-            // Tokenize command and arguments
-            char *args[ARGS_COMMAND];
-            int argc = 0;
-            char *arg_saveptr;
-            char *arg_token = strtok_r(token, " \t", &arg_saveptr);
-            while (arg_token != NULL && argc < ARGS_COMMAND - 1) {
-                args[argc++] = arg_token;
-                arg_token = strtok_r(NULL, " \t", &arg_saveptr);
+            // --- Handle pipes first ---
+            if (strchr(token, '|')) {
+                pipe_handler(token);
             }
-            args[argc] = NULL;
-            if (argc > 0) {
-                if (is_custom_command(args[0])) {
-                    execute_command(args[0], args);
-                } else {
-                    run_external_command(args[0], args, bg_bit);
+            // --- Handle redirection ---
+            else if (strchr(token, '<') || strstr(token, ">>") || strchr(token, '>')) {
+                redirection_handler(token);
+            }
+            // --- Normal execution ---
+            else {
+                char *args[ARGS_COMMAND];
+                int argc = 0;
+                char *arg_saveptr;
+                char *arg_token = strtok_r(token, " \t", &arg_saveptr);
+                while (arg_token != NULL && argc < ARGS_COMMAND - 1) {
+                    args[argc++] = strip_quotes(arg_token);   // <-- strip here
+                    arg_token = strtok_r(NULL, " \t", &arg_saveptr);
+                }
+                args[argc] = NULL;
+
+                if (argc > 0) {
+                    if (is_custom_command(args[0])) {
+                        execute_command(args[0], args);
+                    } else {
+                        run_external_command(args[0], args, bg_bit);
+                    }
                 }
             }
         }
+
         // Move past delimiter
         i++;
     }

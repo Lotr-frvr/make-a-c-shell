@@ -1,15 +1,15 @@
+wc < a.txt
+echo "Lorem ipsum" > newfile.txt
+cat newfile.txt
+echo "dolor sit amet" >> newfile.txt; cat newfile.txt
 exit
-seek newfolder
+echo "Hello world" > newfile.txt
+cat newfile.txt
+echo "Hello world" > newfile.txt
+echo "hello world" > out.txt
 exit
-seek newfolder
-seek newfolder ./newfolder
-seek -d newfolder ./newfolder
-seek -f newfolder ./newfolder
-seek newfolder ./obj
-seek -d -f newfolder ./obj
-seek -e -f newfolder ./newfolder
-exit
-seek -e -f newfolder ./newfolder
-seek -e -d newfloder ./newfolder
-seek -e -d newfolder
+echo hello\ world > newfile.txt
+cat newfile.txt
+echo hello world > newfile.txt
+cat newfile.txt
 exit
