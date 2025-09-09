@@ -23,7 +23,7 @@ void bg_exit_handler(int signum){
         if (WIFEXITED(status)) {
             printf("\n%s exited normally (%d)\n", proc_name, pid);
         } else {
-            printf("\n%s exited abnormally (%d)\n", proc_name, pid);
+            printf("\n%s exited abnormally (through ping) (%d)\n", proc_name, pid);
         }
         fflush(stdout);
     }
@@ -35,7 +35,7 @@ void bg_function(char* command, char* args[], pid_t pid) {
         bgs = malloc(sizeof(struct backproc) * BG_MAX); // or a suitable max
     }
     bgs[bgi].pid = pid;
-    strncpy(bgs[bgi].name, command, CURRFG_SIZE - 1);
+    strncpy(bgs[bgi].name, args[0], CURRFG_SIZE - 1);
     bgs[bgi].name[CURRFG_SIZE - 1] = '\0';
     bgi++;
 }

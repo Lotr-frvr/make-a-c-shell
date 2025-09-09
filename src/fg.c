@@ -12,8 +12,16 @@ void fg_function(char* command, char* args[], pid_t pid) {
     strncpy(currfgcom, command, CURRFG_SIZE - 1);
     currfgcom[CURRFG_SIZE - 1] = '\0';
 
-    waitpid(pid, &status, 0);
+    waitpid(pid, &status, WUNTRACED); // return on stop or exit
 
+    if (WIFSTOPPED(status)) {
+        // move to background
+        if(bgs == NULL) bgs = malloc(sizeof(struct backproc) * BG_MAX);
+        strcpy(bgs[bgi].name, currfgcom);
+        bgs[bgi].pid = currfgid;
+        bgi++;
+        printf("\nMoved process %d to background (Stopped)\n", currfgid);
+    }
     time_t end_time = time(NULL);
     int duration = (int)(end_time - start_time);
 

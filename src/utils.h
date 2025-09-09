@@ -21,7 +21,6 @@ void log_command(char* args[]);
 char* get_log_file_path();
 void log_purge();
 
-// /*signal.c*/
 
 /* hop.c */
 void hop(char* args[]);
@@ -61,7 +60,7 @@ extern int bgi; // index of current background process
 extern struct backproc *bgs; // list of background processes
 
 // /*iMan.c*/
-// void iMan(char* args[]);
+void iMan(char* args[]);
 
 
 /*fg.c*/
@@ -84,9 +83,9 @@ void ctrld();
 void ctrlz();
 
 
-// /*fgtotbg*/
-// void fgtobg( char* args[]);
-// void bgtofg( char* args[]);
+/*fgandbg*/
+void fgtobg( char* args[]);
+void bgtofg( char* args[]);
 
 
 

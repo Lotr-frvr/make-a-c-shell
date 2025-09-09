@@ -65,6 +65,15 @@ void execute_command(char* command, char * args[] ) {
     else if(strcmp(command, "ping") == 0) {
         ping(args);
     }
+    else if(strcmp(command, "iMan") == 0) {
+        iMan(args);
+    }
+    else if(strcmp(command, "fg") == 0) {
+        bgtofg(args);
+    }
+    else if(strcmp(command, "bg") == 0) {
+        fgtobg(args);
+    }
     else{
         printf(ERROR_COLOR"Command not found: %s\n"RESET, command);
     }
@@ -160,7 +169,12 @@ void input(){
     size_t len = 0;
     if(getline(&input_command, &len, stdin) == -1){ 
         // input wasnt read properly
-        fprintf(stderr, "Error reading input\n");
+        if(feof(stdin)) {
+            ctrld(); // Handle Ctrl-D (EOF)
+        } else {
+            fprintf(stderr, "Error reading input\n");
+        }
+        
     }
     log_write_command_to_file(input_command);  // Log the command
 
