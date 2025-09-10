@@ -117,6 +117,8 @@ ls & pwd; echo hi & sleep 1
 here `&` and `;` seperates the different commands 
 & indicates bg processes 
 
+`Issue-> Background processes started by the shell do not persist across new terminal sessions. When you close and reopen the terminal, the shell does not retain information about background jobs from previous sessions. Only processes started in the current session are tracked and managed.
+`
 ### proclore.c
 
 Information required to print :
@@ -202,3 +204,108 @@ prints a list of all the processes currently running that were spawned by your s
 Format of an entry is:
 
 [pid] : [command name] - [State]
+
+### signals 
+
+Take the pid of a process and send a signal to it which corresponds to the signal number (which is provided as an argument). Print error “No such process found”, if process with given pid does not exist. Takes signal number’s modulo with 32 before checking which signal it belongs to (assuming x86/ARM machine). 
+
+Ctrl - C
+
+Interrupts any currently running foreground process by sending it the SIGINT signal. It has no effect if no foreground process is currently running.
+
+Ctrl - D
+
+Logs out of your shell (after killing all processes) while having no effect on the actual terminal.
+
+Ctrl - Z
+
+Pushes the (if any) running foreground process to the background and change it’s state from “Running” to “Stopped”. It has no effect on the shell if no foreground process is running.
+
+A succesful run with ctrlz --
+``` 
+JohnDoe@SYS:~$ ./a.out 
+JohnDoe@SYS:~$ sleep 100 
+^ZStopped process 530688 with SIGTSTP
+
+Process moved to background (Stopped)
+
+Moved process 0 to background (Stopped)
+JohnDoe@SYS:~ sleep : 3s $ activities
+530688 : sleep - Stopped
+JohnDoe@SYS:~$ ping 530688 18
+Sent signal 18 to process with pid 530688
+JohnDoe@SYS:~$ activities
+530688 : sleep - Running
+JohnDoe@SYS:~$ exit 
+```
+### fg and bg 
+
+fg <pid>
+
+Brings the running or stopped background process with corresponding pid to foreground, handing it the control of terminal. Print “No such process found”, if no process with given pid exists.
+
+bg <pid>
+
+Changes the state of a stopped background process to running (in the background). If a process with given pid does not exist, print “No such process found” to the terminal.
+
+A sample run 
+```
+JohnDoe@SYS:~$ activities
+No background processes
+
+JohnDoe@SYS:~$ sleep 100
+^Z
+Stopped process 12345 with SIGTSTP
+Process moved to background (Stopped)
+
+JohnDoe@SYS:~$ activities
+12345 : sleep - Stopped
+
+JohnDoe@SYS:~$ bg 12345
+Process with PID 12345 moved to background.
+Process 12345 running in background.
+
+JohnDoe@SYS:~$ activities
+12345 : sleep - Running
+
+JohnDoe@SYS:~$ sleep 200
+^Z
+Stopped process 12346 with SIGTSTP
+Process moved to background (Stopped)
+
+JohnDoe@SYS:~$ activities
+12345 : sleep - Running
+12346 : sleep - Stopped
+
+JohnDoe@SYS:~$ fg 12346
+Process 12346 continued in foreground.
+^C
+Interrupted process 12346 with SIGINT
+
+JohnDoe@SYS:~$ activities
+12345 : sleep - Running
+
+JohnDoe@SYS:~$ fg 12345
+Process 12345 continued in foreground.
+^C
+Interrupted process 12345 with SIGINT
+
+JohnDoe@SYS:~$ activities
+No background processes
+```
+
+### iMan 
+
+Issue-> the pages have been moved
+
+### neonate 
+
+
+
+Issues
+havent done neonate, iMan, aliasing
+Background processes should terminate when the program is killed 
+echo hello world 
+
+log -> temp.txt
+log records newline too

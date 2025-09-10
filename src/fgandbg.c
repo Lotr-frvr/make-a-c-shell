@@ -16,30 +16,27 @@ void fgtobg(char* args[]) {
 
     int pid = atoi(args[1]);
     int found = 0;
+
     // Check if the process is currently in the foreground
     if (getpgid(pid) == getpgrp()) {
         for (int i = 0; i < bgi; i++) {
             if (bgs[i].pid == pid) {
                 found = 1;
 
-                // If the process is stopped, continue it in the background
+                // Resume the process if it is stopped
                 if (kill(pid, 0) == 0) {
-                    kill(pid, SIGCONT); // Resume the process if it was stopped
+                    kill(pid, SIGCONT);
                 }
-                // Add to background process list the fg process name and pid
-                strcpy(bgs[i].name, currfgcom);
-                bgs[i].pid = pid;
-                bgi++;
-                printf("Process with PID %d moved to background.\n", pid);
 
-                // Update process state
+                // Print process info without overwriting the stored name
                 int status;
                 waitpid(pid, &status, WNOHANG | WUNTRACED);
 
+                printf("%d : %s ", pid, bgs[i].name);
                 if (WIFSTOPPED(status)) {
-                    printf("Process %d stopped and moved to background.\n", pid);
+                    printf("[Stopped]\n");
                 } else {
-                    printf("Process %d running in background.\n", pid);
+                    printf("[Running]\n");
                 }
 
                 break;
