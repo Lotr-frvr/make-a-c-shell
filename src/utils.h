@@ -59,8 +59,6 @@ void activities();
 extern int bgi; // index of current background process
 extern struct backproc *bgs; // list of background processes
 
-// /*iMan.c*/
-void iMan(char* args[]);
 
 
 /*fg.c*/
@@ -70,7 +68,9 @@ void fg_function(char* command, char* args[], pid_t pid);
 void bg_function(char* command, char* args[], pid_t pid);
 void bg_exit_handler(int signum);
 void cleanup_bg_processes();
-// /*neonate.c*/
+
+/*neonate.c*/
+void neonate(char* args[]);
 
 /*ping.c*/
 void ping(char* args[]);

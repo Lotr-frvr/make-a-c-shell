@@ -294,18 +294,11 @@ JohnDoe@SYS:~$ activities
 No background processes
 ```
 
-### iMan 
-
-Issue-> the pages have been moved
-
 ### neonate 
 
 
+Issue :->
 
-Issues
+echo hello world : quotes arent handles 
 
-havent done neonate, iMan, aliasing
-
-echo hello world 
-
-log -> temp.txt
+log -> temp.txt : shows warning 

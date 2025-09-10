@@ -66,14 +66,14 @@ void execute_command(char* command, char * args[] ) {
     else if(strcmp(command, "ping") == 0) {
         ping(args);
     }
-    else if(strcmp(command, "iMan") == 0) {
-        iMan(args);
-    }
     else if(strcmp(command, "fg") == 0) {
         bgtofg(args);
     }
     else if(strcmp(command, "bg") == 0) {
         fgtobg(args);
+    }
+    else if(strcmp(command, "neonate") == 0) {
+        neonate(args);
     }
     else{
         printf(ERROR_COLOR"Command not found: %s\n"RESET, command);
