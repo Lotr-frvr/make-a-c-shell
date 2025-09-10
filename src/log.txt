@@ -1,15 +1,15 @@
+sleep 5 &
+echo Lorem Ipsum
+proclore
+echo Lorem Ipsum | wc
+cat a.txt
+cat < a.txt | wc | cat > b.txt
+cat b.txt
+activities
+fg 98296
+sleep 10
 exit
-activities
-sleep 30 &; gedit act.txt & ; gedit hello.txt &
-activities
-
-emacs new.txt ; gedit hello.txt & sleep 40 &
-emacs new.txt & gedit hello.txt & sleep 40 &
-activities
-pkill 464560
-activties
-activities
-kill 464560
-ps
-kill -9 464560
-activities
+sleep 100 &
+exit
+slepp 100 &
+sleep 100 & 

@@ -57,11 +57,7 @@ void ctrlc(int signum) {
  * Exits shell after killing all background processes.
  */
 void ctrld() {
-    for (int i = 0; i < bgi; i++) {
-        if (bgs[i].pid > 0) {
-            kill(bgs[i].pid, SIGKILL);
-        }
-    }
+    cleanup_bg_processes();
     printf("Exiting shell...\n");
     exit(0);
 }
@@ -71,21 +67,32 @@ void ctrld() {
  * Moves current foreground process to background in stopped state.
  */
 void ctrlz(int signum) {
-    if(bgs==0){
-        bgs = malloc(sizeof(struct backproc) * BG_MAX); 
+    (void)signum; // unused parameter
+
+    if (!bgs) {
+        bgs = malloc(sizeof(struct backproc) * BG_MAX);
+        if (!bgs) return; // malloc failed
+        bgi = 0;
     }
+
     if (currfgid > 0) {
+        // Send SIGTSTP
         if (kill(currfgid, SIGTSTP) == 0) {
-            
-            printf("Stopped process %d with SIGTSTP\n", currfgid);
+            // Save in background list
             strcpy(bgs[bgi].name, currfgcom);
             bgs[bgi].pid = currfgid;
             bgi++;
 
-            currfgid = 0; // reset foreground
+            // Print safe messages
+            char buf[128];
+            int len = snprintf(buf, sizeof(buf), "\nStopped process %d with SIGTSTP\n", currfgid);
+            write(STDOUT_FILENO, buf, len);
 
-            write(STDOUT_FILENO, "\nProcess moved to background (Stopped)\n", 39);
-            return ;
+            len = snprintf(buf, sizeof(buf), "Process %d moved to background (Stopped)\n", currfgid);
+            write(STDOUT_FILENO, buf, len);
+
+            // Reset foreground
+            currfgid = 0;
         }
     } else {
         write(STDOUT_FILENO, "\n", 1);

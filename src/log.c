@@ -79,6 +79,12 @@ char* get_last_line() {
 
 // Write a new command to the log file
 void log_write_command_to_file(char *command) {
+    if(command == NULL || command[0] == '\0' || strcmp(command, "\n") == 0) {
+        return;
+    }
+    if(strlen(command) == 0) {
+        return;
+    }
     checkandcreatefile();  // Ensure log file exists
 
     if (strstr(command, "log") != NULL) {

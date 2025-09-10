@@ -69,11 +69,7 @@ void fg_function(char* command, char* args[], pid_t pid);
 /*bg.c*/
 void bg_function(char* command, char* args[], pid_t pid);
 void bg_exit_handler(int signum);
-// void delete_bg(int id);
-// void sigchld_handler(int signum);
-// void handle_bg_termination();
-// void setup_signal_handler();
-
+void cleanup_bg_processes();
 // /*neonate.c*/
 
 /*ping.c*/

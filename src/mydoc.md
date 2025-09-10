@@ -303,9 +303,9 @@ Issue-> the pages have been moved
 
 
 Issues
+
 havent done neonate, iMan, aliasing
-Background processes should terminate when the program is killed 
+
 echo hello world 
 
 log -> temp.txt
-log records newline too

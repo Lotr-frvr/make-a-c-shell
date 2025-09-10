@@ -3,6 +3,20 @@
 extern int bgi;
 extern struct backproc *bgs;
 
+void cleanup_bg_processes() {
+    for (int i = 0; i < bgi; i++) {
+        if (kill(bgs[i].pid, 0) == 0) {  // check if still alive
+            if (kill(bgs[i].pid, SIGTERM) == 0) {
+                waitpid(bgs[i].pid, NULL, 0); // wait for it to terminate
+                //printf("Terminated background process [%d] %s\n", bgs[i].pid, bgs[i].name);
+            }
+        }
+    }
+    free(bgs);
+    bgs = NULL;
+    bgi = 0;
+}
+
 void bg_exit_handler(int signum){
     int status;
     pid_t pid;

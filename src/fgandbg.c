@@ -1,5 +1,11 @@
 #include "header_library.h"
 #include "utils.h"
+#include <signal.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 extern int bgi;
 extern struct backproc *bgs;
 
@@ -7,8 +13,7 @@ extern int currfgid;
 extern int currfgtime;
 extern char currfgcom[CURRFG_SIZE];
 
-
-void fgtobg(char* args[]) {
+void bgtofg(char* args[]) {
     if (args[1] == NULL) {
         printf("fg: missing process id\n");
         return;
@@ -16,42 +21,53 @@ void fgtobg(char* args[]) {
 
     int pid = atoi(args[1]);
     int found = 0;
+    int index;
 
-    // Check if the process is currently in the foreground
-    if (getpgid(pid) == getpgrp()) {
-        for (int i = 0; i < bgi; i++) {
-            if (bgs[i].pid == pid) {
-                found = 1;
-
-                // Resume the process if it is stopped
-                if (kill(pid, 0) == 0) {
-                    kill(pid, SIGCONT);
-                }
-
-                // Print process info without overwriting the stored name
-                int status;
-                waitpid(pid, &status, WNOHANG | WUNTRACED);
-
-                printf("%d : %s ", pid, bgs[i].name);
-                if (WIFSTOPPED(status)) {
-                    printf("[Stopped]\n");
-                } else {
-                    printf("[Running]\n");
-                }
-
-                break;
-            }
+    // Search for process in background list
+    for (index = 0; index < bgi; index++) {
+        if (bgs[index].pid == pid) {
+            found = 1;
+            break;
         }
-
-        if (!found) {
-            printf("No such process found\n");
-        }
-    } else {
-        printf("Process %d is not in the foreground\n", pid);
     }
+
+    if (!found) {
+        printf("No such process found\n");
+        return;
+    }
+
+    // Give terminal control to the process
+    pid_t pgid = getpgid(pid);
+    pid_t shell_pgid = getpgrp();
+
+    signal(SIGTTOU, SIG_IGN);
+    signal(SIGTTIN, SIG_IGN);
+    if (tcsetpgrp(STDIN_FILENO, pgid) == -1) {
+        perror("tcsetpgrp");
+    }
+
+    // Continue the process
+    kill(pid, SIGCONT);
+
+    // Wait for it to finish or stop
+    int status;
+    waitpid(pid, &status, WUNTRACED);
+
+    // Remove from background list if finished
+    if (WIFEXITED(status) || WIFSIGNALED(status)) {
+        for (int j = index; j < bgi - 1; j++)
+            bgs[j] = bgs[j + 1];
+        bgi--;
+    }
+
+
+    // Restore terminal control to shell
+    tcsetpgrp(STDIN_FILENO, shell_pgid);
+    signal(SIGTTOU, SIG_DFL);
+    signal(SIGTTIN, SIG_DFL);
 }
 
-void bgtofg( char* args[]){
+void fgtobg(char* args[]) {
     if (args[1] == NULL) {
         printf("bg: missing process id\n");
         return;
@@ -60,64 +76,25 @@ void bgtofg( char* args[]){
     int pid = atoi(args[1]);
     int found = 0;
     int index;
-    
-    // Search for the process in the background list
+
+    // Search for process in background list
     for (index = 0; index < bgi; index++) {
         if (bgs[index].pid == pid) {
             found = 1;
             break;
         }
     }
+
     if (!found) {
         printf("No such process found\n");
         return;
     }
 
-    // Set signals to default handling
-    signal(SIGTTOU, SIG_DFL);
-    signal(SIGTTIN, SIG_DFL);
-
-    // Get the process group ID
-    pid_t pgid = getpgid(pid);
-    pid_t shell_pgid = getpgid(0);
-
-    // Move the process to the foreground
-    if (tcsetpgrp(STDIN_FILENO, pgid) == -1) {
-        perror("tcsetpgrp");
-        return;
-    }
-
-    // Continue the process
+    // Resume the process in the background
     if (kill(pid, SIGCONT) == -1) {
         perror("kill");
         return;
     }
 
-    // Wait for the process to complete or be stopped again
-    int status;
-    if (waitpid(pid, &status, WUNTRACED) == -1) {
-        perror("waitpid");
-        return;
-    }
-
-    // Remove the process from the background list if it has completed
-    if (WIFEXITED(status) || WIFSIGNALED(status)) {
-        for (int j = index; j < bgi - 1; j++) {
-            bgs[j] = bgs[j + 1];
-        }
-        bgi--;
-        printf("Process %d has completed and removed from background list.\n", pid);
-    } else if (WIFSTOPPED(status)) {
-        printf("Process %d is stopped.\n", pid);
-    }
-
-    // Restore control to the shell
-    signal(SIGTTOU, SIG_IGN);
-    if (tcsetpgrp(STDIN_FILENO, shell_pgid) == -1) {
-        perror("tcsetpgrp");
-    }
-
-    // Restore default signal handling
-    signal(SIGTTOU, SIG_DFL);
-    signal(SIGTTIN, SIG_DFL);
+    printf("%d %s - Running\n", pid, bgs[index].name);
 }

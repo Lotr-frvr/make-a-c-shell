@@ -42,6 +42,7 @@ void run_external_command(char* command, char * args[], int bg_bit) {
 
 void execute_command(char* command, char * args[] ) {
     if(strcmp(command, "exit") == 0) {
+        cleanup_bg_processes();
         exit(0);
     }
     else if(strcmp(command,"hop")==0){

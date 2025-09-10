@@ -14,20 +14,21 @@ void fg_function(char* command, char* args[], pid_t pid) {
 
     waitpid(pid, &status, WUNTRACED); // return on stop or exit
 
+    // If stopped, ctrlz will handle moving to background, no print needed here
     if (WIFSTOPPED(status)) {
-        // move to background
-        if(bgs == NULL) bgs = malloc(sizeof(struct backproc) * BG_MAX);
-        strcpy(bgs[bgi].name, currfgcom);
-        bgs[bgi].pid = currfgid;
-        bgi++;
-        printf("\nMoved process %d to background (Stopped)\n", currfgid);
+        currfgid = 0;  // just reset foreground id
+        return;
     }
+
+    // Foreground process finished, compute duration
     time_t end_time = time(NULL);
     int duration = (int)(end_time - start_time);
 
     if (duration > 2) {
-        currfgtime = duration;
+        currfgtime = duration;  // display in prompt
     } else {
-        currfgtime = 0; // Don't display in prompt if <= 2 seconds
+        currfgtime = 0;
     }
+
+    currfgid = 0;  // reset foreground id
 }
