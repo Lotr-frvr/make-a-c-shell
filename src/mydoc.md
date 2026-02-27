@@ -295,8 +295,20 @@ No background processes
 ```
 
 ### neonate 
+The neonate command continuously prints the PID (Process ID) of the most recently created process on the system at regular time intervals.It keeps running until the user presses the x key, at which point it terminates.This feature simulates a "neonate monitor" for processes — always showing the "newborn" process on the system.
 
+Usage:
 
+`neonate -n [time_arg]`
+where:
+
+`time_arg` is an integer representing the number of seconds between updates.
+
+The command will:
+
+Fetch the PID of the most recently created process on the system.Print that PID to the terminal.Sleep for `time_arg` seconds.
+
+Repeat until the user presses x.
 Issue :->
 
 echo hello world : quotes arent handles 
